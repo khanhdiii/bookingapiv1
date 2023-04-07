@@ -49,10 +49,11 @@ app.use((err, req, res, next) => {
     })
 })
 const port = process.env.PORT || 8800;
-connectToDatabase().then(() => {
-    app.listen(port, () => {
-        console.log("Connected server.");
+app.listen(port, () => {
+    console.log("Connected server.");
+    connectToDatabase().then(() => {
+    }).catch((error) => {
+        console.error("Error connecting to MongoDB: ", error.message);
     });
-}).catch((error) => {
-    console.error("Error connecting to MongoDB: ", error.message);
 });
+
