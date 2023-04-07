@@ -49,6 +49,11 @@ app.use((err, req, res, next) => {
         stack: err.stack
     })
 })
+
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "font-src 'self' https://bookingapi-pzgz.onrender.com");
+    next();
+});
 const port = process.env.PORT || 8800;
 connectToDatabase().then(() => {
     app.listen(port, () => {
