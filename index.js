@@ -27,9 +27,6 @@ mongoose.connection.on("disconnected", () => {
     console.log("MongoDB disconnected!");
 });
 
-mongoose.connection.on("connected", () => {
-    console.log("MongoDB connected!");
-});
 
 //middlewares
 app.use(cors())
