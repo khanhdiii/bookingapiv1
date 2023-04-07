@@ -51,9 +51,9 @@ app.use((err, req, res, next) => {
         stack: err.stack
     })
 })
-
+const port = process.env.PORT || 8800;
 connectToDatabase().then(() => {
-    app.listen(8800, () => {
+    app.listen(port, () => {
         console.log("Connected server.");
     });
 }).catch((error) => {
