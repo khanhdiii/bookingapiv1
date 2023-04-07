@@ -28,6 +28,7 @@ mongoose.connection.on("disconnected", () => {
 });
 
 
+
 //middlewares
 app.use(cors())
 app.use(cookieParser())
@@ -49,11 +50,10 @@ app.use((err, req, res, next) => {
     })
 })
 const port = process.env.PORT || 8800;
-app.listen(port, () => {
-    console.log("Connected server.");
-    connectToDatabase().then(() => {
-    }).catch((error) => {
-        console.error("Error connecting to MongoDB: ", error.message);
+connectToDatabase().then(() => {
+    app.listen(port, () => {
+        console.log("Connected server.");
     });
+}).catch((error) => {
+    console.error("Error connecting to MongoDB: ", error.message);
 });
-
