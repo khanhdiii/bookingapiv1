@@ -32,14 +32,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-// //set Content-Security-Policy header
-// app.use((req, res, next) => {
-//     res.setHeader(
-//         "Content-Security-Policy",
-//         "font-src 'self' https://bookingapi-pzgz.onrender.com"
-//     );
-//     next();
-// });
 
 //connect to database and start server
 const connectToDatabase = async () => {
