@@ -6,11 +6,13 @@ import hotelsRoute from "./routes/hotels.js";
 import roomsRoute from "./routes/rooms.js";
 import usersRoute from "./routes/users.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 dotenv.config();
 
 //middlewares
+app.use(cookieParser())
 app.use(cors());
 app.use(express.json());
 
