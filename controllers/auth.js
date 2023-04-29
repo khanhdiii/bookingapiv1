@@ -39,7 +39,7 @@ export const login = async (req, res, next) => {
 
         // const userDetails = Array.from(orderDetails) // convert to array
         res.cookie("access_token", token, {
-            httpOnly: true,
+            httpOnly: true, sameSite: "none", secure: true,
         }).status(200).json({ details: { ...otherDetails }, isAdmin })
     } catch (err) {
         next(err)
