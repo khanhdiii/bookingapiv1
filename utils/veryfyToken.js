@@ -29,8 +29,8 @@ export const verifyUser = (req, res, next) => {
 }
 
 export const verifyAdmin = (req, res, next) => {
-    verifyToken(req, res, () => {
-        if (req.user.isAdmin) {
+    verifyToken(req, res, next, () => {
+        if (req.user && req.user.isAdmin) {
             next()
         }
         else {
@@ -38,5 +38,6 @@ export const verifyAdmin = (req, res, next) => {
             err.status = 403
             next(err)
         }
+        console.log(req.user);
     })
 }
