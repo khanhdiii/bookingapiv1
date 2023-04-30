@@ -16,8 +16,8 @@ export const verifyToken = (req, res, next) => {
 }
 
 export const verifyUser = (req, res, next) => {
-    verifyToken(req, res, next, () => {
-        if (err) return next(err);
+    verifyToken(req, res, () => {
+
         if (req.user.id === req.params.id || req.user.isAdmin) {
             next()
         }
@@ -30,9 +30,9 @@ export const verifyUser = (req, res, next) => {
 }
 
 export const verifyAdmin = (req, res, next) => {
-    verifyToken(req, res, next, () => {
-        if (err) return next(err);
-        if (req.user && req.user.isAdmin) {
+    verifyToken(req, res, () => {
+
+        if (req.user.isAdmin) {
             next()
         }
         else {
@@ -40,6 +40,6 @@ export const verifyAdmin = (req, res, next) => {
             err.status = 403
             next(err)
         }
-        console.log(req.user);
+
     })
 }
