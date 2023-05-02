@@ -11,6 +11,20 @@ import cookieParser from "cookie-parser";
 const app = express();
 dotenv.config();
 
+//connect to database and start server
+const connectToDatabase = async () => {
+    try {
+        mongoose.set('strictQuery', false);
+        await mongoose.connect(process.env.MONGO, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log("Connected to MongoDB");
+    } catch (error) {
+        console.error("Error connecting to MongoDB: ", error.message);
+    }
+};
+
 //middlewares
 app.use(cookieParser())
 app.use(cors());
@@ -33,21 +47,6 @@ app.use((err, req, res, next) => {
         stack: err.stack,
     });
 });
-
-
-//connect to database and start server
-const connectToDatabase = async () => {
-    try {
-        mongoose.set('strictQuery', false);
-        await mongoose.connect(process.env.MONGO, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log("Connected to MongoDB");
-    } catch (error) {
-        console.error("Error connecting to MongoDB: ", error.message);
-    }
-};
 
 const port = process.env.PORT || 8800;
 
