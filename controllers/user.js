@@ -14,8 +14,8 @@ export const createUser = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
     try {
-        const updateUser = await User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
-        res.status(200).json(updateUser)
+        const updatedUser = await User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
+        res.status(200).json(updatedUser)
     } catch (err) {
         next(err)
     }
@@ -40,11 +40,9 @@ export const getUser = async (req, res, next) => {
 }
 
 export const getUsers = async (req, res, next) => {
-    const newUser = new User(req.body)
-
     try {
-        const Users = await User.find()
-        res.status(200).json(Users)
+        const users = await User.find();
+        res.status(200).json(users)
     } catch (err) {
         next(err)
     }

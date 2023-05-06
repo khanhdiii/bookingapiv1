@@ -12,22 +12,22 @@ const app = express();
 dotenv.config();
 
 //connect to database and start server
-const connectToDatabase = async () => {
+const connect = async () => {
     try {
-        mongoose.set('strictQuery', false);
-        await mongoose.connect(process.env.MONGO, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log("Connected to MongoDB");
+        await mongoose.connect(process.env.MONGO);
+        console.log("Connected to mongoDB.");
     } catch (error) {
-        console.error("Error connecting to MongoDB: ", error.message);
+        throw error;
     }
 };
 
+mongoose.connection.on("disconnected", () => {
+    console.log("mongoDB disconnected!");
+});
+
 //middlewares
-app.use(cookieParser())
 app.use(cors());
+app.use(cookieParser())
 app.use(express.json());
 
 //routes
@@ -50,12 +50,7 @@ app.use((err, req, res, next) => {
 
 const port = process.env.PORT || 8800;
 
-connectToDatabase()
-    .then(() => {
-        app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
-        });
-    })
-    .catch((error) => {
-        console.error("Error connecting to MongoDB: ", error.message);
-    });
+app.listen(port, () => {
+    connect();
+    console.log("Connected to backend.");
+});
