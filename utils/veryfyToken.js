@@ -3,15 +3,18 @@ import { createError } from "../utils/error.js";
 
 export const verifyToken = (req, res, next) => {
     const token = req.header.token;
-    if (!token) {
-        return next(createError(401, "You are not authenticated!"));
+    if (token) {
+        const accessToken = token.split(" ")[1]
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            if (err) {
+                res.status(403).json("Token is not valid")
+            }
+            req.user = user
+            next();
+        });
     }
-    try {
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        return res.status(403).json({ message: "Invalid token!" });
+    else {
+        return res.status(401).json("You are not authenticated!");
     }
 };
 
