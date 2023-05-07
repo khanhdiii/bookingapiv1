@@ -1,6 +1,6 @@
 import User from "../models/User.js"
 import bcrypt from "bcryptjs"
-const createError = require('http-errors');
+import createError from 'http-errors';
 import jwt from "jsonwebtoken"
 
 
