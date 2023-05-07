@@ -2,6 +2,7 @@ import User from "../models/User.js"
 import bcrypt from "bcryptjs"
 import createError from 'http-errors';
 import jwt from "jsonwebtoken"
+import dotenv from "dotenv";
 
 
 export const register = async (req, res, next) => {
