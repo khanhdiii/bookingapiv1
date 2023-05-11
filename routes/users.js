@@ -5,15 +5,15 @@ import { verifyAdmin, verifyToken, verifyUser } from "../utils/veryfyToken.js";
 const router = express.Router()
 
 //UPDATE
-router.put("/:id", verifyUser, updateUser);
+router.put("/:id", verifyAdmin, updateUser);
 
 //DELETE
-router.delete("/:id", deleteUser);
+router.delete("/:id", verifyAdmin, deleteUser);
 
 //GET
-router.get("/:id", getUser);
+router.get("/:id", verifyAdmin, getUser);
 
 //GET ALL
-router.get("/", getUsers);
+router.get("/", verifyAdmin, getUsers);
 
 export default router
