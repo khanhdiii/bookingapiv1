@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { createError } from "../utils/error.js";
 
 export const verifyToken = (req, res, next) => {
-    const token = req.header.token;
+    const token = req.headers.token;
     if (token) {
         const accessToken = token.split(" ")[1]
         jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
@@ -30,7 +30,7 @@ export const verifyUser = (req, res, next) => {
 };
 
 export const verifyAdmin = (req, res, next) => {
-    verifyToken(req, res, (err) => {
+    verifyToken(req, res, () => {
         if (req.user.isAdmin) {
             next();
         } else {

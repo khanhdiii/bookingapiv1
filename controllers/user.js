@@ -34,7 +34,7 @@ export const getUser = async (req, res, next) => {
         const User = await User.findById(req.params.id)
         res.status(200).json(User)
     } catch (err) {
-        next(err)
+        return res.status(500).json(err)
     }
 }
 
@@ -43,6 +43,6 @@ export const getUsers = async (req, res, next) => {
         const users = await User.find();
         res.status(200).json(users)
     } catch (err) {
-        next(err)
+        return res.status(500).json(err)
     }
 }
