@@ -42,7 +42,7 @@ export const login = async (req, res, next) => {
             const { password, ...otherDetails } = user._doc;
             return res
                 .status(200)
-                .json({ ...otherDetails, isAdmin, token });
+                .json({ ...otherDetails, token });
         }
     } catch (err) {
         next(err);
