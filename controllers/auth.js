@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 
 dotenv.config()
 let refreshTokens = []
-export const register = async (req, res, next) => {
+export const register = async (req, res) => {
     try {
         const salt = await bcrybt.genSalt(10)
         const hashed = await bcrybt.hash(req.body.password, salt)
@@ -25,7 +25,7 @@ export const register = async (req, res, next) => {
         return res.status(500).json(err)
     }
 };
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
     try {
         const user = await User.findOne({ username: req.body.username })
         if (!user) {
