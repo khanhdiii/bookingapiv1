@@ -14,6 +14,7 @@ dotenv.config();
 //connect to database and start server
 const connect = async () => {
     try {
+        mongoose.set("strictQuery", false);
         await mongoose.connect(process.env.MONGO);
         console.log("Connected to mongoDB.");
     } catch (error) {
@@ -52,5 +53,5 @@ const port = process.env.PORT || 8800;
 
 app.listen(port, () => {
     connect();
-    console.log("Connected to backend.");
+    console.log("Connected to backend", port);
 });
