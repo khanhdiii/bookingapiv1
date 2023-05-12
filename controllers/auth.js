@@ -4,58 +4,47 @@ import createError from 'http-errors';
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv";
 
-dotenv.config()
-let refreshTokens = []
-export const register = async (req, res) => {
+
+export const register = async (req, res, next) => {
     try {
-        const salt = await bcrybt.genSalt(10)
-        const hashed = await bcrybt.hash(req.body.password, salt)
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(req.body.password, salt);
 
-        //Create user
-        const newUser = await new User({
-            username: req.body.username,
-            email: req.body.email,
-            password: hashed
-        })
+        const newUser = new User({
+            ...req.body,
+            password: hash,
+        });
 
-        //Saved to DB
-        const user = await newUser.save()
-        return res.status(200).json(user)
+        await newUser.save();
+        res.status(200).send("User has been created.");
     } catch (err) {
-        return res.status(500).json(err)
+        next(err);
     }
 };
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     try {
-        const user = await User.findOne({ username: req.body.username })
-        if (!user) {
-            return res.status(404).json("Wrong username")
+        const user = await User.findOne({ username: req.body.username });
+        if (!user) return next(createError(404, "Wrong username!"));
+
+        const isPasswordCorrect = await bcrypt.compare(
+            req.body.password,
+            user.password
+        );
+        if (!isPasswordCorrect) {
+            return next(createError(400, "Wrong password !"));
         }
-        const validPassword = await bcrybt.compare(req.body.password, user.password)
-        if (!validPassword) {
-            return res.status(404).json("Wrong password")
-        }
-        if (user && validPassword) {
-            const accessToken = generateAccessToken(user)
-            const refreshToken = generateRefreshToken(user)
-            res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: false, path: "/", sameSite: "strict" })
-            const { password, ...others } = user._doc
-            return res.status(200).json({ ...others, accessToken })
+        if (user && isPasswordCorrect) {
+            const token = jwt.sign(
+                { id: user._id, isAdmin: user.isAdmin },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: "1h" }
+            );
+            const { password, ...otherDetails } = user._doc;
+            return res
+                .status(200)
+                .json({ ...otherDetails, isAdmin, token });
         }
     } catch (err) {
-        return res.status(500).json(err)
+        next(err);
     }
 };
-
-export const logout = async (req, res) => {
-    res.clearCookie("refreshToken")
-    refreshTokens = refreshTokens.filter(token => token !== req.cookies.refreshToken)
-    res.status(200).json("Logged out!!")
-}
-
-export const generateAccessToken = (user) => {
-    return jwt.sign({ id: user.id, isAdmin: user.isAdmin }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" })
-}
-export const generateRefreshToken = (user) => {
-    return jwt.sign({ id: user.id, isAdmin: user.isAdmin }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "365d" })
-}
