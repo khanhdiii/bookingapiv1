@@ -1,8 +1,8 @@
+import User from "../models/User.js"
+import bcrypt from "bcryptjs"
 import createError from 'http-errors';
-const bcrybt = require("bcrypt")
-const jwt = require("jsonwebtoken")
-const dotenv = require("dotenv")
-const User = require("../models/User")
+import jwt from "jsonwebtoken"
+import dotenv from "dotenv";
 
 dotenv.config()
 let refreshTokens = []
