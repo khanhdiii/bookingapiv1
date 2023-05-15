@@ -18,6 +18,6 @@ router.delete("/:id/:hotelid", deleteRoom)
 router.get("/:id", getRooms)
 
 //GET ALL
-router.get("/", getRooms)
+router.get("/", verifyAdmin, getRooms)
 
 export default router
