@@ -8,15 +8,18 @@ dotenv.config();
 
 export const register = async (req, res, next) => {
   try {
-    const existingUser = await User.findOne({ username: req.body.username });
+    const { username, password } = req.body;
+
+    const existingUser = await User.exists({ username });
     if (existingUser) {
       return next(createError(400, "Username already exists!"));
     }
+
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(req.body.password, salt);
+    const hash = bcrypt.hashSync(password, salt);
 
     const newUser = new User({
-      ...req.body,
+      username,
       password: hash,
     });
 
@@ -26,27 +29,29 @@ export const register = async (req, res, next) => {
     next(err);
   }
 };
+
 export const login = async (req, res, next) => {
   try {
-    const user = await User.findOne({ username: req.body.username });
-    if (!user) return next(createError(404, "Wrong username!"));
+    const { username, password } = req.body;
 
-    const isPasswordCorrect = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
+    const user = await User.findOne({ username });
+    if (!user) {
+      return next(createError(404, "Wrong username!"));
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      return next(createError(400, "Wrong password !"));
+      return next(createError(400, "Wrong password!"));
     }
-    if (user && isPasswordCorrect) {
-      const token = jwt.sign(
-        { id: user._id, isAdmin: user.isAdmin },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1h" }
-      );
-      const { password, ...otherDetails } = user._doc;
-      return res.status(200).json({ ...otherDetails, token });
-    }
+
+    const token = jwt.sign(
+      { id: user._id, isAdmin: user.isAdmin },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    const { password: userPassword, ...otherDetails } = user._doc;
+    return res.status(200).json({ ...otherDetails, token });
   } catch (err) {
     next(err);
   }
